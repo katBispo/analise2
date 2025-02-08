@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./Backend/chemicalstock
+
+    container_name: chemicalstock-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/chemicalstock?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345678
+    networks:
+      - chemicalstock-network
+
+  frontend:
+    build: ./Frontend/chemical-stock-frontend
+    container_name: chemicalstock-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - chemicalstock-network
+
+  db:
+    image: mysql:latest
+    container_name: chemicalstock-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: chemicalstock
+    ports:
+      - "3306:3306"
+    networks:
+      - chemicalstock-network
+
+networks:
+  chemicalstock-network:
+
